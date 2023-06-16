@@ -1,0 +1,194 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    {{- include "oai-udr.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "oai-udr.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "oai-udr.selectorLabels" . | nindent 8 }}
+      annotations:
+        releaseTime: {{ now | date "2006-01-02T15:04:05" }}
+        traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: affinity
+                    operator: In
+                    values:
+                      - mysql
+              topologyKey: kubernetes.io/hostname
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: wait-for-service
+#        image: yauritux/busybox-curl:latest
+        image: imega/mysql-client
+#        command: [ 'sh', '-c', "until echo -e '^]close^M' | telnet mysql 3306; do echo waiting for mysql; sleep 4; done; sleep 5" ]
+        command: 
+          - 'sh'
+          - '-c'
+          - > 
+            until mysql --host={{ .Values.config.mySqlServer }} --user={{ .Values.config.mySqlUser }} 
+            --password={{ .Values.config.mySqlPass }} --database={{ .Values.config.mySqlDb }} --execute='show tables;'; 
+            do echo waiting for mysql; sleep 4; done; sleep 5
+      containers:
+      - name: tcpdump
+        image: "{{ .Values.tcpdumpimage.repository }}:{{ .Values.tcpdumpimage.version }}"
+        {{- if .Values.start.tcpdump}}
+        command:
+          - /bin/sh
+          - -c
+          - /usr/sbin/tcpdump -i any -w /pcap/oai-udr_`date +%Y-%m-%d_%H_%M-%S-%Z`.pcap
+        {{- else}}
+        command:
+          - /bin/sleep
+          - infinity
+        {{- end}}
+        {{- if .Values.persistence.sharedvolume}}
+        volumeMounts:
+        - mountPath: "/pcap"
+          name: cn5g-pv
+        {{- end}}
+      - name: udr
+        image: "{{ .Values.nfimage.repository }}:{{ .Values.nfimage.version }}"
+        imagePullPolicy: {{ .Values.nfimage.pullPolicy }}
+        {{- if .Values.resources.define}}
+        resources:
+          requests:
+            memory: {{ .Values.resources.requests.memory | quote }}
+            cpu: {{ .Values.resources.requests.cpu | quote }}
+          limits:
+            memory: {{ .Values.resources.limits.memory | quote }}
+            cpu: {{ .Values.resources.limits.cpu | quote }}
+        {{- end}}
+        volumeMounts:
+        - mountPath: /scripts
+          name: scripts
+        {{- if .Values.readinessProbe}}
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - netstat -tnpl | grep -o "$UDR_INTERFACE_PORT_FOR_NUDR" && netstat -tpn | grep -o 3306
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        {{- end}}
+        {{- if .Values.livenessProbe}}
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - netstat -tnpl | grep -o "$UDR_INTERFACE_PORT_FOR_NUDR" && netstat -tpn | grep -o 3306
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        {{- end}}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        ports:
+        - containerPort: {{ .Values.service.http1Port }}
+          name: http1
+        - containerPort: {{ .Values.service.http2Port }}
+          name: http2
+        {{- if .Values.start.udr}}
+        {{- else}}
+        command:
+          - /bin/sleep
+          - infinity
+        {{- end}}
+        env:
+          - name: TZ
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: tz     
+          - name: INSTANCE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: instance
+          - name: PID_DIRECTORY
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: pidDirectory
+          - name: UDR_INTERFACE_NAME_FOR_NUDR
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: udrInterfaceNameForNudr
+          - name: UDR_INTERFACE_PORT_FOR_NUDR
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: udrInterfaceHttp1PortForNudr
+          - name: UDR_INTERFACE_HTTP2_PORT_FOR_NUDR
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: udrInterfaceHttp2PortForNudr
+          - name: UDR_API_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: udrApiVersion
+          - name: MYSQL_IPV4_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: mySqlServer
+          - name: MYSQL_USER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: mySqlUser
+          - name: MYSQL_PASS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: mySqlPass
+          - name: MYSQL_DB
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Chart.Name }}-configmap
+                key: mySqlDb
+        {{- if .Values.start.udr}}
+        {{- else}}
+        command:
+          - /bin/sleep
+          - infinity
+        {{- end}}
+      volumes:
+      {{- if .Values.persistence.sharedvolume}}
+      - name: cn5g-pv
+        persistenceVolumeClaim:
+          claimName: cn5g-pvc
+      {{- end }}
+      - name: scripts
+        configMap:
+          name: {{ .Chart.Name }}-health-cm
+          defaultMode: 0777
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- if .Values.nodeSelector}}
+      nodeSelector: {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeName}}
+      nodeName: {{ .Values.nodeName }}
+      {{- end }}

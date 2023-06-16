@@ -1,0 +1,53 @@
+questions:
+- variable: nfimage.version
+  default: develop
+  description: "image version"
+  label: Image version
+  type: string
+- variable: nfimage.pullPolicy
+  default: IfNotPresent
+  description: "image pull policy"
+  label: Image pull policy
+  type: string
+- variable: config
+  subquestions:
+  - variable: externalAusf
+    default: "yes"
+    description: "Use external AUSF?"
+    type: string
+    label: external AUSF
+  - variable: sst0
+    default: "222"
+    description: "SST0 (must be set according to Access network)"
+    type: string
+    label: SST0
+  - variable: sd0
+    default: "123"
+    description: "SD0 (must be set according to Access network)"
+    type: string
+    label: SD0
+  - variable: sst1
+    default: "111"
+    description: "SST1 (must be set according to Access network)"
+    type: string
+    label: SST1
+  - variable: sd1
+    default: "124"
+    description: "SD1 (must be set according to Access network)"
+    type: string
+    label: SD1
+- variable: multus
+  subquestions:
+  - variable: hostInterface
+    description: "Node interface to be used for N1"
+    type: string
+    label: Host interface for multus
+  - variable: n1IPadd
+    description: "N1 IP address"
+    type: string
+    label: N1 IP address
+  - variable: n1Netmask
+    default: "24"
+    description: "N1 IP mask"
+    type: string
+    label: N1 IP mask

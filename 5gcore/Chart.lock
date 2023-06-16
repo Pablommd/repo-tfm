@@ -1,0 +1,27 @@
+dependencies:
+- name: oai-amf
+  repository: ""
+  version: 1.1.0
+- name: oai-ausf
+  repository: ""
+  version: 1.1.2
+- name: oai-nrf
+  repository: ""
+  version: 1.1.0
+- name: oai-smf
+  repository: ""
+  version: 1.1.0
+- name: oai-spgwu-tiny
+  repository: ""
+  version: 1.1.2
+- name: oai-udm
+  repository: ""
+  version: 1.1.2
+- name: oai-udr
+  repository: ""
+  version: 1.1.2
+- name: mysql
+  repository: ""
+  version: 1.6.9
+digest: sha256:c0f56a32db5186f53ec85ab83bcdda9cf5970833f9797f87454011ece380eb89
+generated: "2022-02-27T16:49:57.379029068-05:00"

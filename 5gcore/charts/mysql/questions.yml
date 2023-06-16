@@ -1,0 +1,11 @@
+questions:
+- variable: persistence.enabled
+  default: true
+  description: "create pvc for mysql"
+  label: Persistence
+  type: boolean
+- variable: imagePullPolicy
+  default: IfNotPresent
+  description: "image pull policy"
+  label: Image pull policy
+  type: string

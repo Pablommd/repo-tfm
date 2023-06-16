@@ -1,0 +1,18 @@
+questions:
+- variable: mysql.persistence.enabled
+  description: "Enable persistance for mysql"
+  label: MySQL persistance
+  type: boolean
+- variable: oai-smf.config.smfInterfaceNameForN4
+  description: "Interface to be used for N4"
+  type: string
+  label: N4 interface
+- variable: oai-smf.config.udmFqdn
+  default: "oai-udm-svc"
+  description: "UDM FQDN"
+  type: string
+  label: UDM FQDN
+- variable: oai-smf.multus.create
+  description: "Create Multus"
+  label: Multus
+  type: boolean

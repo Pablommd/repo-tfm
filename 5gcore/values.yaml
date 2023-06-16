@@ -1,0 +1,103 @@
+oai-amf:
+  enabled: true
+  weight: 5
+  nfimage:
+    repository: oaisoftwarealliance/oai-amf
+    version: latest
+    pullPolicy: IfNotPresent
+#  nodeSelector:
+#    cnf-type: control-plane
+  multus:
+    hostInterface: "ens8"
+    routes: 
+      - network: "192.168.69.128/26"
+        gw: "192.168.18.129"
+      - network: "192.168.1.0/29"
+        gw: "192.168.18.129"
+  config:
+    externalAusf: "yes"
+    sst0: "222"
+    sd0: "123"
+    sst1: "111"
+    sd1: "124"
+oai-smf:
+  enabled: true
+  weight: 6
+  nfimage:
+    repository: oaisoftwarealliance/oai-smf
+    version: v1.2.1
+    pullPolicy: IfNotPresent
+#  nodeSelector:
+#    cnf-type: control-plane
+  multus:
+    create: false
+  config:
+    smfInterfaceNameForN4: "eth0"
+    udmFqdn: "oai-udm-svc"
+oai-nrf:
+  enabled: true
+  weight: 1
+  nfimage:
+    version: v1.2.1
+    pullPolicy: IfNotPresent
+  repository: oaisoftwarealliance/oai-nrf
+#  nodeSelector:
+#    cnf-type: control-plane
+oai-spgwu-tiny:
+  enabled: true
+  weight: 7
+  nfimage:
+    repository: oaisoftwarealliance/oai-spgwu-tiny
+    version: v1.1.4
+    pullPolicy: IfNotPresent
+#  nodeSelector:
+#    cnf-type: user-plane
+  config:
+    nssaiSst0: 222
+    nssaiSd0: 123
+  multus:
+    hostInterface: "ens8"
+    routes:
+      - network: "192.168.69.128/26"
+        gw: "192.168.18.129"
+      - network: "192.168.68.128/26"
+        gw: "192.168.18.129"
+      - network: "192.168.1.0/29"
+        gw: "192.168.18.129"
+      - network: "192.168.70.128/26"
+        gw: "192.168.18.129"
+oai-ausf:
+  enabled: true
+  weight: 4
+  nfimage:
+    version: v1.2.1
+    repository: oaisoftwarealliance/oai-ausf
+    pullPolicy: IfNotPresent
+#  nodeSelector:
+#    cnf-type: control-plane
+oai-udm:
+  enabled: true
+  weight: 3
+  nfimage:
+    version: v1.2.1
+    repository: oaisoftwarealliance/oai-udm
+    pullPolicy: IfNotPresent
+#  nodeSelector:
+#    cnf-type: control-plane
+oai-udr:
+  enabled: true
+  weight: 2
+  nfimage:
+    version: v1.2.1
+    repository: oaisoftwarealliance/oai-udr
+    pullPolicy: IfNotPresent
+  livenessProbe: true
+  readinessProbe: true
+#  nodeSelector:
+#    cnf-type: control-plane
+mysql:
+  enabled: true
+  weight: 0
+  imagePullPolicy: IfNotPresent
+  persistence:
+    enabled: false

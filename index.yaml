@@ -1,0 +1,53 @@
+apiVersion: v1
+entries:
+  oai-5gcore:
+  - apiVersion: v2
+    appVersion: 1.1.0
+    created: "2023-06-16T17:11:02.078990461+02:00"
+    dependencies:
+    - condition: oai-amf.enabled
+      name: oai-amf
+      repository: ""
+      version: 1.1.0
+    - condition: oai-ausf.enabled
+      name: oai-ausf
+      repository: ""
+      version: 1.1.2
+    - condition: oai-nrf.enabled
+      name: oai-nrf
+      repository: ""
+      version: 1.1.0
+    - condition: oai-smf.enabled
+      name: oai-smf
+      repository: ""
+      version: 1.1.0
+    - condition: oai-spgwu-tiny.enabled
+      name: oai-spgwu-tiny
+      repository: ""
+      version: 1.1.2
+    - condition: oai-udm.enabled
+      name: oai-udm
+      repository: ""
+      version: 1.1.2
+    - condition: oai-udr.enabled
+      name: oai-udr
+      repository: ""
+      version: 1.1.2
+    - condition: mysql.enabled
+      name: mysql
+      repository: ""
+      version: 1.6.9
+    description: Helm chart for the complete 5G Core
+    digest: 44575e21041d397a9099514cc3b6270f1933d8c801a86fc6e1a8abda81a3651f
+    icon: http://www.openairinterface.org/wp-content/uploads/2015/06/cropped-oai_final_logo.png
+    keywords:
+    - 5GCN
+    maintainers:
+    - email: contact@openairinterface.org
+      name: OPENAIRINTERFACE
+    name: oai-5gcore
+    type: application
+    urls:
+    - https://Pablommd.github.io/repo-tfm/oai-5gcore-1.1.0.tgz
+    version: 1.1.0
+generated: "2023-06-16T17:11:02.075600263+02:00"
