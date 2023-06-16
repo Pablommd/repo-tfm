@@ -8,7 +8,7 @@ namespace: "oai"
 
 nfimage:
   registry: local
-  repository: rdefosseoai/oai-udr # image name either locally present or in a public/private repository
+  repository: oaisoftwarealliance/oai-udr # image name either locally present or in a public/private repository
   version: v1.1.0 # image tag
   #pullPolicy: IfNotPresent or Never or Always
   pullPolicy: Always

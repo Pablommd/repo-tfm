@@ -9,7 +9,7 @@ namespace: "oai"
 # NF image
 nfimage:
   registry: local
-  repository: rdefosseoai/oai-nrf
+  repository: oaisoftwarealliance/oai-nrf
   version: v1.1.0
   # pullPolicy: IfNotPresent or Never or Always
   pullPolicy: Always
