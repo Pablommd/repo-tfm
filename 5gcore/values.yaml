@@ -8,7 +8,7 @@ oai-amf:
 #  nodeSelector:
 #    cnf-type: control-plane
   multus:
-    hostInterface: "ens8"
+    hostInterface: "ens4"
     routes: 
       - network: "192.168.69.128/26"
         gw: "192.168.18.129"
@@ -56,7 +56,7 @@ oai-spgwu-tiny:
     nssaiSst0: 222
     nssaiSd0: 123
   multus:
-    hostInterface: "ens8"
+    hostInterface: "ens4"
     routes:
       - network: "192.168.69.128/26"
         gw: "192.168.18.129"
