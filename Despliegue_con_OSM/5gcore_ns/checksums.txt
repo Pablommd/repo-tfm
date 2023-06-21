@@ -1,0 +1,1 @@
+80f5f2620763ee71ccff909854654220	5gcore_ns/5gcore_nsd.yaml
