@@ -3,7 +3,7 @@ oai-amf:
   weight: 5
   nfimage:
     repository: oaisoftwarealliance/oai-amf
-    version: v1.2.0
+    version: latest
     pullPolicy: IfNotPresent
 #  nodeSelector:
 #    cnf-type: control-plane
